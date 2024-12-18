@@ -4,6 +4,7 @@ import Portal from '@portal-hq/web';
 
 import pyusdThumb from '../public/pyusd.png';
 import solanaThumb from '../public/solana.png';
+import { RequestArguments } from '@portal-hq/web/types';
 
 export interface ITokenBalance {
   balance: string;
@@ -19,7 +20,10 @@ export interface ITokenBalance {
 interface IPortalContext {
   ready: boolean;
   getSolanaAddress: () => Promise<string>;
+  getEip155Address: () => Promise<string>;
   getSolanaTokenBalances: () => Promise<ITokenBalance[]>;
+  getPolygonTokenBalances: () => Promise<ITokenBalance[]>;
+  request: (req: RequestArguments) => Promise<string>;
   sendTokensOnSolana: (
     to: string,
     tokenMint: string,
@@ -34,12 +38,15 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({
   const [portal, setPortal] = useState<Portal>();
 
   useEffect(() => {
+    console.log(process.env.portalClientApiKey)
+
     setPortal(
       new Portal({
         apiKey: process.env.portalClientApiKey,
         autoApprove: true,
         rpcConfig: {
           [process.env.solanaChainId!]: process.env.solanaRpcUrl!,
+          "eip155:137": "https://polygon-mainnet.g.alchemy.com/v2/ExD4AhsURGGgGXK7455Pekt-FkCwSKEn"
         },
       }),
     );
@@ -62,6 +69,39 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({
           const solAddress = await portal.getSolanaAddress();
 
           return solAddress;
+        },
+        async getEip155Address() {
+          if (!portal || !portal?.ready)
+            throw new Error('Portal has not initialised');
+
+          const walletExists = await portal.doesWalletExist();
+
+          if (!walletExists) {
+            await portal.createWallet();
+          }
+
+          const eip155Address = await portal.getEip155Address();
+
+          return eip155Address;
+        },
+        async request(req: RequestArguments) {
+          if (!portal || !portal?.ready)
+            throw new Error('Portal has not initialised');
+
+          return portal.request(req)
+        },
+        async getPolygonTokenBalances() {
+          const res = await fetch('/api/getPolygonAssets');
+          const data = await res.json();
+
+          if (data.error) throw new Error(data.error);
+
+
+          data.tokenBalances.map((val: any) => {
+            console.log(val)
+          })
+
+          return data.tokenBalances
         },
         async getSolanaTokenBalances() {
           const res = await fetch('/api/getSolanaAssets');

@@ -97,7 +97,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <MuiAppBar position="fixed">
           <Container maxWidth="xl">
             <Toolbar>
-              <IconButton
+              {/* <IconButton
                 color="inherit"
                 aria-label="open drawer"
                 onClick={handleDrawerOpen}
@@ -105,14 +105,14 @@ export default function Layout({ children }: { children: ReactNode }) {
                 sx={{ mr: 2, ...(open && { display: 'none' }) }}
               >
                 <MenuIcon />
-              </IconButton>
+              </IconButton> */}
               <Box sx={{ flexGrow: 1 }}></Box>
               <Box>
                 {solanaAddress ? (
                   <TextField
                     size="small"
-                    label="Solana Address"
-                    value={solanaAddress}
+                    label="Account Id"
+                    value={`User-${solanaAddress.substring(solanaAddress.length-4)}`}
                     spellCheck={false}
                     InputProps={{
                       sx: {
@@ -141,7 +141,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     onClick={async () => await generateSolanaAddress()}
                     endIcon={generatingSolanaAddress ? <Pending /> : <Send />}
                   >
-                    Get Solana Wallet
+                    Login
                   </Button>
                 )}
               </Box>
@@ -183,7 +183,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </Drawer>
         <Container maxWidth="xl">
           <DrawerHeader />
-          {children}
+          {solanaAddress && children}
         </Container>
       </Container>
     </Box>

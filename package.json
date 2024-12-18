@@ -11,12 +11,18 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@aave/contract-helpers": "^1.30.5",
+    "@aave/math-utils": "^1.30.5",
+    "@aave/protocol-js": "^4.3.0",
+    "@bgd-labs/aave-address-book": "^4.6.0",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.6",
     "@mui/material": "^5.16.6",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@portal-hq/web": "^3.2.0",
+    "dayjs": "^1.11.13",
+    "ethers": "5",
     "next": "14.2.10",
     "react": "^18",
     "react-dom": "^18",
